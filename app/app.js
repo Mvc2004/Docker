@@ -1,29 +1,26 @@
-const express = require('express');
-const redis = require('redis');
+const express = require("express");
+const { createClient } = require("redis");
+
 const app = express();
 const port = 3000;
 
-
-const client = redis.createClient({
-  host: 'redis', 
-  port: 6379
+const client = createClient({
+  url: 'redis://redis:6379' // nombre del contenedor en docker-compose
 });
 
-client.on('connect', function() {
-  console.log('Conectado a Redis');
-});
+client.on('error', err => console.log('Redis Client Error', err));
 
-app.get('/', (req, res) => {
-  client.incr('visits', function(err, visits) {
-    if (err) {
-      res.status(500).send('Error con Redis');
-      return;
-    }
+async function startServer() {
+  await client.connect(); // Espera a que Redis esté conectado
+
+  app.get("/", async (req, res) => {
+    const visits = await client.incr("visits");
     res.send(`Número de visitas: ${visits}`);
   });
-});
 
+  app.listen(port, () => {
+    console.log(`Aplicación escuchando en http://localhost:${port}`);
+  });
+}
 
-app.listen(port, () => {
-  console.log(`Aplicación escuchando en http://localhost:${port}`);
-});
+startServer();

@@ -1,4 +1,4 @@
-name: Deploy App
+name: Deploy App with Docker Compose
 
 on:
   push:
@@ -6,34 +6,29 @@ on:
       - main
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
-      # Paso 1: Revisar el código
-      - name: Checkout code
+      - name: Checkout repo
         uses: actions/checkout@v3
 
-      # Paso 2: Verificar conectividad a internet
-      - name: Verify internet connectivity
-        run: |
-          echo "Verificando conectividad a internet..."
-          curl -I https://www.google.com  # Verifica si se puede hacer una solicitud HTTP
-          
-          # También puedes usar el comando 'ping' si prefieres verificar la conectividad ICMP
-          # ping -c 4 google.com
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
-      # Paso 3: Configurar Docker
-      - name: Set up Docker
-        uses: docker/setup-buildx-action@v2
+      - name: Build and Start containers
+        run: |
+          docker compose up --build -d
 
-      # Paso 4: Construir y desplegar la aplicación
-      - name: Build and Deploy
+      - name: Wait for services to be ready
         run: |
-        docker compose up --build -d
-    
-      # Paso 5: Verificar que los contenedores están en ejecución
-      - name: Verify containers are running
+          echo "Esperando 10 segundos para que los servicios estén listos..."
+          sleep 10
+
+      - name: List running containers
+        run: docker ps
+
+      - name: Test HTTP response
         run: |
-          docker ps
+          curl --max-time 20 http://localhost:3000 || echo "La aplicación no respondió correctamente"
 

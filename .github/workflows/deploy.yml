@@ -30,8 +30,8 @@ jobs:
       # Paso 4: Construir y desplegar la aplicación
       - name: Build and Deploy
         run: |
-          docker-compose up --build -d
-
+        docker compose up --build -d
+    
       # Paso 5: Verificar que los contenedores están en ejecución
       - name: Verify containers are running
         run: |

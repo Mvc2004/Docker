@@ -1,5 +1,5 @@
 # Docker
-# Informe de Despliegue de Aplicación Web Sencilla
+# Informe
 **Nombre:** Merly Velásquez  
 **Código:** 2266016-3743
 
@@ -15,27 +15,27 @@ Basada en: https://nodejs.org/en/docs/guides/nodejs-docker-webapp/
 
 ## Dockerfile
 
-FROM node:alpine
-WORKDIR /app
-COPY package*.json ./
-RUN npm install
-COPY . .
-EXPOSE 3000
-CMD ["node", "index.js"]
+    FROM node:alpine
+    WORKDIR /app
+    COPY package*.json ./
+    RUN npm install
+    COPY . .
+    EXPOSE 3000
+    CMD ["node", "index.js"]
 
 
 ## docker-compose.yml
 
-services:
-  app:
-    build: .
-    ports:
-      - "3000:3000"
-    depends_on:
-      - redis
+    services:
+    app:
+        build: .
+        ports:
+        - "3000:3000"
+        depends_on:
+        - redis
 
-  redis:
-    image: redis:alpine
+    redis:
+        image: redis:alpine
 
 ## GitHub Actions
 
@@ -65,13 +65,13 @@ jobs:
 
 ## Resultados
 
-docker ps:
+    docker ps:
 
-[output esperado]
+    [output esperado]
 
-curl http://localhost:3000:
+    curl http://localhost:3000:
 
-¡Hola desde Node.js y Redis! Has visitado esta página X veces.
+    ¡Hola desde Node.js y Redis! Has visitado esta página X veces.
 
 ## Conclusión
 
